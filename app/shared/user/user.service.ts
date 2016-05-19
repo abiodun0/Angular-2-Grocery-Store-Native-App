@@ -12,47 +12,39 @@ import "rxjs/add/operator/map";
 
 @Injectable()
 export class UserService {
-  constructor(private _http: Http) {
-
-  }
+  constructor(private _http: Http) {}
   private getHeaders() {
     let headers = new Headers();
     headers.append("Content-Type", "application/json");
     return headers;
   }
-  private makeRequest(url: string, object: any) {
-   return this._http.post(Config.apiUrl + "Users",
+  private makeRequest(url: string, object: any): Observable<Response> {
+   return this._http.post(Config.apiUrl + url,
       JSON.stringify(object),
       {
         headers: this.getHeaders()
       })
       .catch(this.handleErrors);
   }
-  register(user: User) {
+  register(user: User): Observable<Response> {
     let headers = this.getHeaders();
     return this.makeRequest("Users", { Username: user.email,
       Email: user.email,
       Password: user.password});
   }
-  handleErrors(error: Response) {
+  handleErrors(error: Response): Observable<Response> {
     console.log(error.json());
     return Observable.throw(error);
     }
-  login(user: User) {
-    let headers = this.getHeaders();
-    return this._http.post(
-      Config.apiUrl + "oauth/token",
-      JSON.stringify({
-        username: user.email,
-        password: user.password,
-        grant_type: "password"
-      }),
-      { headers: headers }
-    )
+  login(user: User): Observable<Response> {
+    return this.makeRequest("oauth/token", {
+      username: user.email,
+      password: user.password,
+      grant_type: "password"
+    })
       .map(response => response.json())
       .do(data => {
         Config.token = data.Result.access_token;
-      })
-      .catch(this.handleErrors);
+      });
   }
 }

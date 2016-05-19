@@ -34,6 +34,7 @@ export class LoginPage implements OnInit {
       });
   }
   login() {
+    console.log(this.user.email, this.user.password);
     return this._userService.login(this.user)
       .subscribe((user) => { console.log(user); alert("successfully signed in");
         this._router.navigate(["List"]);
