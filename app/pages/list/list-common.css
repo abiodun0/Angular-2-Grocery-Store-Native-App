@@ -11,3 +11,10 @@
 TextField {
   color: white;
 }
+
+.small-spacing {
+  margin: 5;
+}
+.medium-spacing {
+  margin: 10;
+}

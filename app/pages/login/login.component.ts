@@ -1,5 +1,7 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, ElementRef, OnInit, ViewChild} from "@angular/core";
 import {Page} from "ui/page";
+import {Color} from "color";
+import {View} from "ui/core/view";
 import {User} from "../../shared/user/user";
 import {HTTP_PROVIDERS} from "@angular/http";
 import {Router} from "@angular/router-deprecated";
@@ -14,7 +16,7 @@ import {UserService} from "../../shared/user/user.service";
 export class LoginPage implements OnInit {
   user: User;
   isLoggedIn = false;
-  // email = "abiodun@golden0.com";
+  @ViewChild("container") container: ElementRef;
   constructor(private _userService: UserService, private _router: Router, private page: Page) {
     this.user = new User();
   }
@@ -43,6 +45,11 @@ export class LoginPage implements OnInit {
   }
   toggleDisplay() {
     this.isLoggedIn = !this.isLoggedIn;
+    let container = <View> this.container.nativeElement;
+    container.animate({
+      backgroundColor: this.isLoggedIn ? new Color("white") : new Color("#301217"),
+      duration: 200
+    });
   }
   signUp() {
     this._userService.register(this.user);

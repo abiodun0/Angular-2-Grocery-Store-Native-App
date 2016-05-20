@@ -9,6 +9,18 @@ import "rxjs/add/operator/do";
 import "rxjs/add/operator/map";
 
 
+export interface UserRegistration {
+  username: string;
+  password: string;
+  grant_type: string;
+}
+export interface UserSignIn {
+  Username: string;
+  Password: string;
+  Email: string;
+}
+
+export type Userinfo = UserRegistration | UserSignIn;
 
 @Injectable()
 export class UserService {
@@ -18,19 +30,21 @@ export class UserService {
     headers.append("Content-Type", "application/json");
     return headers;
   }
-  private makeRequest(url: string, object: any): Observable<Response> {
+  private makeRequest(url: string, object: Userinfo): Observable<Response> {
    return this._http.post(Config.apiUrl + url,
       JSON.stringify(object),
       {
         headers: this.getHeaders()
       })
-      .catch(this.handleErrors);
+   .catch(this.handleErrors);
   }
   register(user: User): Observable<Response> {
     let headers = this.getHeaders();
-    return this.makeRequest("Users", { Username: user.email,
+    return this.makeRequest("Users", {
+      Username: user.email,
       Email: user.email,
-      Password: user.password});
+      Password: user.password
+    });
   }
   handleErrors(error: Response): Observable<Response> {
     console.log(error.json());
