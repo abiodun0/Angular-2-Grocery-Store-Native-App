@@ -13,6 +13,7 @@ export class GroceryListService {
     console.log("load got here", Config.token);
     let headers = new Headers();
     headers.append("Authorization", "Bearer " + Config.token);
+    headers.append("Content-Type", "application/json");
 
     return this._http.get(Config.apiUrl + "Groceries", {
       headers: headers
@@ -42,7 +43,10 @@ export class GroceryListService {
       JSON.stringify({ Name: name }),
       { headers: headers }
     )
-      .map(res => res.json())
+      .map(res => {
+        console.log(res);
+        return res.json();
+      })
       .map(data => {
         return new Grocery(data.Result.Id, name);
       })

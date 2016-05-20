@@ -8,6 +8,9 @@
   margin-left: 10;
   margin-right: 5;
 }
+.delete-bar Image{
+  background-color: white;
+}
 TextField {
   color: white;
 }
