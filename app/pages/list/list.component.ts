@@ -1,7 +1,7 @@
 import {Component, OnInit, ElementRef, ViewChild} from "@angular/core";
 import {TextField} from "ui/text-field";
 import { GroceryListService } from "../../shared/grocery/grocery-list.service";
-import { Grocery } from "../../shared/grocery/grocery";
+import { Person } from "../../shared/grocery/grocery";
 
 @Component({
   selector: "list-page",
@@ -10,18 +10,17 @@ import { Grocery } from "../../shared/grocery/grocery";
   styleUrls: ["pages/list/list-common.css", "pages/list/list.css"]
 })
 export class ListComponent implements OnInit {
-  groceryList: Array<Grocery> = [];
-  grocery: string;
+  groceryList: Array<Person> = [];
+  grocery: string = "";
 
   @ViewChild("groceryTextField") groceryTextField: ElementRef;
   constructor(private _groceryList: GroceryListService) {
   }
   ngOnInit() {
-   console.log("got here");
    this._groceryList.load()
-    .subscribe(loadedGroceries => {
-      console.log(loadedGroceries);
+    .then(loadedGroceries => {
       loadedGroceries.forEach((groceryObject) => {
+        console.dump(groceryObject.firstname);
         this.groceryList.unshift(groceryObject);
       });
     });

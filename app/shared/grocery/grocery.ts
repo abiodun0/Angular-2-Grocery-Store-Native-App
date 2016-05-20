@@ -1,3 +1,3 @@
-export class Grocery {
-  constructor(public id: string, public name: string) {}
+export class Person {
+  constructor(public id: string, public firstName: string, public lastName: string) {}
 }

@@ -1,9 +1,8 @@
 import {Injectable} from "@angular/core";
 import {Http, Headers, Response} from "@angular/http";
 import {Config} from "../config";
-import {Grocery} from "./grocery";
+import {Person} from "./grocery";
 import {Observable} from "rxjs/Rx";
-import "rxjs/add/operator/map";
 
 @Injectable()
 export class GroceryListService {
@@ -13,24 +12,23 @@ export class GroceryListService {
     console.log("load got here", Config.token);
     let headers = new Headers();
     headers.append("Authorization", "Bearer " + Config.token);
-    headers.append("Content-Type", "application/json");
+    // headers.append("Content-Type", "application/json");
 
-    return this._http.get(Config.apiUrl + "Groceries", {
-      headers: headers
-    })
-    .map(res => {
-      console.log(res, "response");
-      return res.json();
-    })
-    .map(data => {
-      let groceryList = [];
-      data.Result.forEach((grocery) => {
-        groceryList.push(new Grocery(grocery.Id, grocery.Name));
-      });
-      console.log(groceryList);
-      return groceryList;
-    })
-    .catch(this.handleErrors);
+    return this._http.get("http://waitressandela.herokuapp.com/users/")
+      .toPromise().then((response) => {
+        console.log("got here", response);
+        return response.json();
+      } , (error) => this.handleErrors(error));
+    // .map(data => {
+    //   console.log(data, "response 2");
+    //   let groceryList = [];
+    //   data.Result.forEach((person) => {
+    //     groceryList.push(new Person(person.id, person.firstName, person.lastName));
+    //   });
+    //   console.log(groceryList);
+    //   return groceryList;
+    // })
+    // .catch(this.handleErrors);
   }
 
   add(name: string) {
@@ -47,9 +45,9 @@ export class GroceryListService {
         console.log(res);
         return res.json();
       })
-      .map(data => {
-        return new Grocery(data.Result.Id, name);
-      })
+      // .map(data => {
+      //   return new Grocery(data.Result.Id, name);
+      // })
       .catch(this.handleErrors);
   }
 

@@ -15,8 +15,8 @@
 
   <ListView [items]="groceryList" row="1" class="small-spacing">
     <template let-item="item">
-     <GridLayout row="0" columns="90%, auto">
-      <Label [text]="item.name" class="medium-spacing" col="0"></Label>
+     <GridLayout row="0" columns="*, auto">
+      <Label [text]="item.firstname" class="medium-spacing" col="0"></Label>
       <Image src="res://add" col="1" (tap)="add()"></Image>
     </GridLayout>
     </template>
