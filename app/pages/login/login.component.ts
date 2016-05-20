@@ -3,13 +3,12 @@ import {Page} from "ui/page";
 import {Color} from "color";
 import {View} from "ui/core/view";
 import {User} from "../../shared/user/user";
-import {HTTP_PROVIDERS} from "@angular/http";
 import {Router} from "@angular/router-deprecated";
 import {UserService} from "../../shared/user/user.service";
 
 @Component({
   selector: "login",
-  providers: [UserService, HTTP_PROVIDERS],
+  providers: [UserService],
   templateUrl: "pages/login/login.html",
   styleUrls: ["pages/login/login-common.css", "pages/login/login.css"]
 })
