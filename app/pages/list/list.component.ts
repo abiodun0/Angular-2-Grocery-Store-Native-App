@@ -1,7 +1,9 @@
 import {Component, OnInit, ElementRef, ViewChild} from "@angular/core";
 import {TextField} from "ui/text-field";
+let socialShare = require("nativescript-social-share");
 import { GroceryListService } from "../../shared/grocery/grocery-list.service";
 import { Grocery } from "../../shared/grocery/grocery";
+
 
 @Component({
   selector: "list-page",
@@ -12,19 +14,31 @@ import { Grocery } from "../../shared/grocery/grocery";
 export class ListComponent implements OnInit {
   groceryList: Array<Grocery> = [];
   grocery: string = "";
+  isLoading: boolean = false;
+  listLoaded: boolean = false;
 
   @ViewChild("groceryTextField") groceryTextField: ElementRef;
   constructor(private _groceryList: GroceryListService) {
   }
   ngOnInit() {
-   this._groceryList.load()
-    .then(loadedGroceries => {
-      loadedGroceries.forEach((groceryObject) => {
-        this.groceryList.unshift(groceryObject);
+    this.isLoading = true;
+    this._groceryList.load()
+      .subscribe(loadedGroceries => {
+        loadedGroceries.forEach((groceryObject) => {
+          this.groceryList.unshift(groceryObject);
+        });
+        this.isLoading = false;
+        this.listLoaded = true;
       });
-    });
   }
-
+  share() {
+    let list = [];
+    for (let i = 0, size = this.groceryList.length; i < size; i++) {
+      list.push(this.groceryList[i].name);
+    }
+    let listString = list.join(", ").trim();
+    socialShare.shareText(listString);
+  }
   add() {
     if (this.grocery.trim() === "") {
       alert("Enter a grocery item");
@@ -48,5 +62,13 @@ export class ListComponent implements OnInit {
         });
         this.grocery = "";
       });
+  }
+  delete(item: Grocery) {
+    if (!confirm("Are you sure you want to delete this item")) return;
+    this._groceryList.delete(item.id)
+      .subscribe((data) => {
+        let index = this.groceryList.indexOf(item);
+        this.groceryList.splice(index, 1);
+      }, () => console.log("there was an error"));
   }
 }

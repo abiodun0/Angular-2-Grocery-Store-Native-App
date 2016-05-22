@@ -9,26 +9,21 @@ export class GroceryListService {
   constructor(private _http: Http) {}
 
   load() {
-    console.log("load got here", Config.token);
     let headers = new Headers();
     headers.append("Authorization", "Bearer " + Config.token);
-    // headers.append("Content-Type", "application/json");
 
-    return this._http.get(Config.apiUrl + "Groceries", { headers: headers})
-      .toPromise().then((response) => {
-        console.dump(response);
-        return response.json();
-      } , (error) => this.handleErrors(error));
-    // .map(data => {
-    //   console.log(data, "response 2");
-    //   let groceryList = [];
-    //   data.Result.forEach((person) => {
-    //     groceryList.push(new Person(person.id, person.firstName, person.lastName));
-    //   });
-    //   console.log(groceryList);
-    //   return groceryList;
-    // })
-    // .catch(this.handleErrors);
+    return this._http.get(Config.apiUrl + "Groceries", {
+      headers: headers
+    })
+      .map(res => res.json())
+      .map(data => {
+        let groceryList = [];
+        data.Result.forEach((grocery) => {
+          groceryList.push(new Grocery(grocery.Id, grocery.Name));
+        });
+        return groceryList;
+      })
+      .catch(this.handleErrors);
   }
 
   add(name: string) {
@@ -49,6 +44,18 @@ export class GroceryListService {
       .map(data => {
         return new Grocery(data.Result.Id, name);
       })
+      .catch(this.handleErrors);
+  }
+  delete(id: string) {
+    let headers = new Headers();
+    headers.append("Authorization", "Bearer " + Config.token);
+    headers.append("Content-Type", "application/json");
+
+    return this._http.delete(
+      Config.apiUrl + "Groceries/" + id,
+      { headers: headers }
+    )
+      .map(res => res.json())
       .catch(this.handleErrors);
   }
 
