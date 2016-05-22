@@ -4,59 +4,45 @@ import {Config} from "../config";
 import {Grocery} from "./grocery";
 import {Observable} from "rxjs/Rx";
 
+
+
 @Injectable()
 export class GroceryListService {
   constructor(private _http: Http) {}
 
-  load() {
+  private makeRequest(method: string, requestBody?: string): Observable<any> {
+    return this._http[method](Config.apiUrl + "Groceries",
+      { headers: this.header }, requestBody)
+      .map(res => res.json())
+      .catch(this.handleErrors);
+  }
+
+  private get header(): Headers{
     let headers = new Headers();
     headers.append("Authorization", "Bearer " + Config.token);
+    headers.append("Content-Type", "application/json");
+    return headers;
+  }
+  load() {
+    return this.makeRequest("get", null)
+    .map(data => {
+      let groceryList = [];
+      data.Result.forEach((grocery) => {
+        groceryList.push(new Grocery(grocery.Id, grocery.Name));
+      });
+      return groceryList;
+    });
 
-    return this._http.get(Config.apiUrl + "Groceries", {
-      headers: headers
-    })
-      .map(res => res.json())
-      .map(data => {
-        let groceryList = [];
-        data.Result.forEach((grocery) => {
-          groceryList.push(new Grocery(grocery.Id, grocery.Name));
-        });
-        return groceryList;
-      })
-      .catch(this.handleErrors);
   }
 
   add(name: string) {
-    let headers = new Headers();
-    headers.append("Authorization", "Bearer " + Config.token);
-    headers.append("Content-Type", "application/json");
-
-    return this._http.post(
-      Config.apiUrl + "Groceries",
-      JSON.stringify({ firstname: name }),
-      { headers: headers }
-    )
-      .map(res => {
-        console.log("json");
-        console.dump(res.json());
-        return res.json();
-      })
+    return this.makeRequest("post", JSON.stringify({ firstname: name }))
       .map(data => {
         return new Grocery(data.Result.Id, name);
-      })
-      .catch(this.handleErrors);
+      });
   }
   delete(id: string) {
-    let headers = new Headers();
-    headers.append("Authorization", "Bearer " + Config.token);
-    headers.append("Content-Type", "application/json");
-
-    return this._http.delete(
-      Config.apiUrl + "Groceries/" + id,
-      { headers: headers }
-    )
-      .map(res => res.json())
-      .catch(this.handleErrors);
+    return this.makeRequest("delete", null);
   }
 
   handleErrors(error: Response) {
