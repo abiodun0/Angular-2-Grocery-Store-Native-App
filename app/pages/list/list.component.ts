@@ -44,6 +44,7 @@ export class ListComponent implements OnInit {
       alert("Enter a grocery item");
       return;
     }
+    this.isLoading = true;
 
     // Dismiss the keyboard
     let textField = <TextField>this.groceryTextField.nativeElement;
@@ -54,6 +55,7 @@ export class ListComponent implements OnInit {
       groceryObject => {
         this.groceryList.unshift(groceryObject);
         this.grocery = "";
+        this.isLoading = false;
       },
       () => {
         alert({
@@ -61,14 +63,22 @@ export class ListComponent implements OnInit {
           okButtonText: "OK"
         });
         this.grocery = "";
+        this.isLoading = false;
       });
   }
   delete(item: Grocery) {
-    if (!confirm("Are you sure you want to delete this item")) return;
-    this._groceryList.delete(item.id)
-      .subscribe((data) => {
-        let index = this.groceryList.indexOf(item);
-        this.groceryList.splice(index, 1);
-      }, () => console.log("there was an error"));
+    if (confirm("Are you sure you want to delete this item")) {
+      this.isLoading = true;
+      this._groceryList.delete(item.id)
+        .subscribe((data) => {
+          let index = this.groceryList.indexOf(item);
+          this.groceryList.splice(index, 1);
+          this.isLoading = false;
+        }, () => {
+          console.log("there was an error");
+          this.isLoading = false;
+        });
+    }
   }
 }
+
