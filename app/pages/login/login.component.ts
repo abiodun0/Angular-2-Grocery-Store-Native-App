@@ -15,6 +15,7 @@ import {UserService} from "../../shared/user/user.service";
 export class LoginPage implements OnInit {
   user: User;
   isLoggedIn = false;
+
   @ViewChild("container") container: ElementRef;
   constructor(private _userService: UserService, private _router: Router, private page: Page) {
     this.user = new User();
